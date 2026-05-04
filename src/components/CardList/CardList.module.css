@@ -1,0 +1,23 @@
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 1rem;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.item {
+  display: flex;
+}
+
+.item > * {
+  flex: 1;
+}
+
+.empty {
+  text-align: center;
+  color: #888;
+  font-style: italic;
+  padding: 3rem 1rem;
+}
