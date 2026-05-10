@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach } from 'vitest';
+import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { loadSearchTerm, saveSearchTerm } from './storage';
 
 describe('storage', () => {
@@ -19,5 +19,21 @@ describe('storage', () => {
     saveSearchTerm('rick');
     saveSearchTerm('morty');
     expect(loadSearchTerm()).toBe('morty');
+  });
+
+  it('returns empty string when localStorage.getItem throws', () => {
+    const spy = vi.spyOn(Storage.prototype, 'getItem').mockImplementation(() => {
+      throw new Error('blocked');
+    });
+    expect(loadSearchTerm()).toBe('');
+    spy.mockRestore();
+  });
+
+  it('silently ignores localStorage.setItem failures', () => {
+    const spy = vi.spyOn(Storage.prototype, 'setItem').mockImplementation(() => {
+      throw new Error('quota');
+    });
+    expect(() => saveSearchTerm('boom')).not.toThrow();
+    spy.mockRestore();
   });
 });
