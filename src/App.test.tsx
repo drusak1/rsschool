@@ -105,6 +105,20 @@ describe('<App />', () => {
     });
   });
 
+  it('does not refetch when the search term has not changed', async () => {
+    const fetchMock = vi.fn().mockResolvedValue(buildResponse(charactersPayload));
+    vi.stubGlobal('fetch', fetchMock);
+    const user = userEvent.setup();
+
+    render(<App />);
+    await screen.findByText('Rick Sanchez');
+    expect(fetchMock).toHaveBeenCalledTimes(1);
+
+    await user.click(screen.getByRole('button', { name: /^search$/i }));
+
+    expect(fetchMock).toHaveBeenCalledTimes(1);
+  });
+
   it('shows the ErrorBoundary fallback when the trigger button is clicked', async () => {
     vi.stubGlobal('fetch', vi.fn().mockResolvedValue(buildResponse(charactersPayload)));
     const consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => undefined);

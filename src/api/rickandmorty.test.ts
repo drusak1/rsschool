@@ -79,6 +79,15 @@ describe('fetchCharacters', () => {
     await expect(fetchCharacters('rick')).rejects.toBeInstanceOf(ApiError);
   });
 
+  it('throws ApiError on non-404 4xx', async () => {
+    mockFetch({ ok: false, status: 400 });
+
+    await expect(fetchCharacters('rick')).rejects.toMatchObject({
+      name: 'ApiError',
+      status: 400,
+    });
+  });
+
   it('throws ApiError when fetch itself fails (network error)', async () => {
     vi.stubGlobal('fetch', vi.fn().mockRejectedValue(new TypeError('Failed to fetch')));
 
