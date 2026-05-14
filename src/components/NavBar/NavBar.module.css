@@ -1,0 +1,27 @@
+.nav {
+  display: flex;
+  gap: 0.25rem;
+  background: #1565c0;
+  padding: 0 1rem;
+}
+
+.link {
+  padding: 0.75rem 1rem;
+  color: rgba(255, 255, 255, 0.85);
+  text-decoration: none;
+  font-size: 0.95rem;
+  font-weight: 500;
+  border-bottom: 3px solid transparent;
+  transition:
+    color 0.15s,
+    border-color 0.15s;
+}
+
+.link:hover {
+  color: white;
+}
+
+.link.active {
+  color: white;
+  border-bottom-color: white;
+}
