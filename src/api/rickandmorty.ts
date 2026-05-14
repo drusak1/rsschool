@@ -1,4 +1,4 @@
-import type { Character, CharactersResponse } from '../types/character';
+import type { Character, CharacterDetail, CharactersResponse } from '../types/character';
 
 const API_BASE = 'https://rickandmortyapi.com/api/character';
 
@@ -17,9 +17,13 @@ export interface FetchCharactersResult {
   totalPages: number;
 }
 
-export async function fetchCharacters(searchTerm: string): Promise<FetchCharactersResult> {
+export async function fetchCharacters(
+  searchTerm: string,
+  page: number = 1,
+): Promise<FetchCharactersResult> {
   const trimmed = searchTerm.trim();
-  const url = trimmed ? `${API_BASE}/?name=${encodeURIComponent(trimmed)}` : `${API_BASE}/`;
+  const query = trimmed ? `?name=${encodeURIComponent(trimmed)}&page=${page}` : `?page=${page}`;
+  const url = `${API_BASE}/${query}`;
 
   let response: Response;
   try {
@@ -41,4 +45,19 @@ export async function fetchCharacters(searchTerm: string): Promise<FetchCharacte
 
   const data = (await response.json()) as CharactersResponse;
   return { characters: data.results, totalPages: data.info.pages };
+}
+
+export async function fetchCharacter(id: number): Promise<CharacterDetail> {
+  let response: Response;
+  try {
+    response = await fetch(`${API_BASE}/${id}`);
+  } catch {
+    throw new ApiError('Network error. Check your connection.', 0);
+  }
+
+  if (!response.ok) {
+    throw new ApiError(`Character not found (${response.status}).`, response.status);
+  }
+
+  return (await response.json()) as CharacterDetail;
 }

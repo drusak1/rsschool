@@ -12,6 +12,6 @@ export function saveSearchTerm(value: string): void {
   try {
     localStorage.setItem(SEARCH_KEY, value);
   } catch {
-    // localStorage может быть недоступен (приватный режим, квота) — игнорируем.
+    // noop
   }
 }
