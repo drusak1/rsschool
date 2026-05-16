@@ -1,25 +1,15 @@
-import { Component } from 'react';
-import type { ReactNode } from 'react';
+import { useState } from 'react';
 
-interface State {
-  shouldThrow: boolean;
-}
+export function ErrorTrigger(): React.JSX.Element {
+  const [shouldThrow, setShouldThrow] = useState(false);
 
-export class ErrorTrigger extends Component<object, State> {
-  state: State = { shouldThrow: false };
-
-  handleClick = (): void => {
-    this.setState({ shouldThrow: true });
-  };
-
-  render(): ReactNode {
-    if (this.state.shouldThrow) {
-      throw new Error('Manual error triggered for ErrorBoundary test.');
-    }
-    return (
-      <button type="button" onClick={this.handleClick}>
-        Throw error
-      </button>
-    );
+  if (shouldThrow) {
+    throw new Error('Manual error triggered for ErrorBoundary test.');
   }
+
+  return (
+    <button type="button" onClick={() => setShouldThrow(true)}>
+      Throw error
+    </button>
+  );
 }

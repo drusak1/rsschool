@@ -1,6 +1,7 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { MemoryRouter } from 'react-router-dom';
 import { App } from './App';
 
 const charactersPayload = {
@@ -40,6 +41,14 @@ function buildResponse(body: unknown, init: { ok?: boolean; status?: number } = 
   } as unknown as Response;
 }
 
+function renderApp(initialEntry = '/') {
+  return render(
+    <MemoryRouter initialEntries={[initialEntry]}>
+      <App />
+    </MemoryRouter>,
+  );
+}
+
 describe('<App />', () => {
   beforeEach(() => {
     localStorage.clear();
@@ -52,7 +61,7 @@ describe('<App />', () => {
   it('shows loader while fetching, then renders results', async () => {
     vi.stubGlobal('fetch', vi.fn().mockResolvedValue(buildResponse(charactersPayload)));
 
-    render(<App />);
+    renderApp();
 
     expect(screen.getByRole('status')).toBeInTheDocument();
     expect(await screen.findByText('Rick Sanchez')).toBeInTheDocument();
@@ -63,11 +72,13 @@ describe('<App />', () => {
     localStorage.setItem('rsschool-react-search-term', 'rick');
     vi.stubGlobal('fetch', vi.fn().mockResolvedValue(buildResponse(charactersPayload)));
 
-    render(<App />);
+    renderApp();
 
     expect(screen.getByRole('searchbox')).toHaveValue('rick');
     await screen.findByText('Rick Sanchez');
-    expect(fetch).toHaveBeenCalledWith('https://rickandmortyapi.com/api/character/?name=rick');
+    expect(fetch).toHaveBeenCalledWith(
+      'https://rickandmortyapi.com/api/character/?name=rick&page=1',
+    );
   });
 
   it('saves trimmed term and refetches when user submits a new search', async () => {
@@ -78,7 +89,7 @@ describe('<App />', () => {
     vi.stubGlobal('fetch', fetchMock);
     const user = userEvent.setup();
 
-    render(<App />);
+    renderApp();
     await screen.findByText('Rick Sanchez');
 
     await user.clear(screen.getByRole('searchbox'));
@@ -88,7 +99,7 @@ describe('<App />', () => {
     await screen.findByText('Morty Smith');
     expect(localStorage.getItem('rsschool-react-search-term')).toBe('morty');
     expect(fetchMock).toHaveBeenLastCalledWith(
-      'https://rickandmortyapi.com/api/character/?name=morty',
+      'https://rickandmortyapi.com/api/character/?name=morty&page=1',
     );
   });
 
@@ -98,7 +109,7 @@ describe('<App />', () => {
       vi.fn().mockResolvedValue(buildResponse({}, { ok: false, status: 500 })),
     );
 
-    render(<App />);
+    renderApp();
 
     await waitFor(() => {
       expect(screen.getByRole('alert')).toHaveTextContent(/server is unavailable/i);
@@ -110,7 +121,7 @@ describe('<App />', () => {
     vi.stubGlobal('fetch', fetchMock);
     const user = userEvent.setup();
 
-    render(<App />);
+    renderApp();
     await screen.findByText('Rick Sanchez');
     expect(fetchMock).toHaveBeenCalledTimes(1);
 
@@ -124,12 +135,24 @@ describe('<App />', () => {
     const consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => undefined);
     const user = userEvent.setup();
 
-    render(<App />);
+    renderApp();
     await screen.findByText('Rick Sanchez');
 
     await user.click(screen.getByRole('button', { name: /throw error/i }));
 
     expect(screen.getByRole('alert')).toHaveTextContent(/something went wrong/i);
     consoleErrorSpy.mockRestore();
+  });
+
+  it('renders the About page when navigating to /about', () => {
+    renderApp('/about');
+    expect(screen.getByRole('heading', { name: /about/i })).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: /rs school/i })).toBeInTheDocument();
+  });
+
+  it('renders the 404 page for unknown routes', () => {
+    renderApp('/this-route-does-not-exist');
+    expect(screen.getByText('404')).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: /back to home/i })).toBeInTheDocument();
   });
 });
