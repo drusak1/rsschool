@@ -1,4 +1,4 @@
-const SEARCH_KEY = 'rsschool-react-search-term';
+export const SEARCH_KEY = 'rsschool-react-search-term';
 
 export function loadSearchTerm(): string {
   try {

@@ -3,6 +3,7 @@ import { useSearchParams, useMatch, Outlet, useNavigate } from 'react-router-dom
 import { fetchCharacters, ApiError } from '../api/rickandmorty';
 import type { Character } from '../types/character';
 import { useLocalStorage } from '../hooks/useLocalStorage';
+import { SEARCH_KEY } from '../utils/storage';
 import { Search } from '../components/Search/Search';
 import { CardList } from '../components/CardList/CardList';
 import { Pagination } from '../components/Pagination/Pagination';
@@ -31,8 +32,6 @@ function fetchReducer(_state: FetchState, action: FetchAction): FetchState {
       return { status: 'error', message: action.message };
   }
 }
-
-const SEARCH_KEY = 'rsschool-react-search-term';
 
 export function MainPage(): React.JSX.Element {
   const [searchParams] = useSearchParams();
