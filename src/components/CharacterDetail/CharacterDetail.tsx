@@ -1,18 +1,18 @@
 import { useEffect, useReducer } from 'react';
 import { useParams, useNavigate, useSearchParams } from 'react-router-dom';
 import { fetchCharacter, ApiError } from '../../api/rickandmorty';
-import type { CharacterDetail as CharacterDetailType } from '../../types/character';
+import type { CharacterDetailData } from '../../types/character';
 import { Loader } from '../Loader/Loader';
 import styles from './CharacterDetail.module.css';
 
 type DetailState =
   | { status: 'loading' }
-  | { status: 'success'; character: CharacterDetailType }
+  | { status: 'success'; character: CharacterDetailData }
   | { status: 'error'; message: string };
 
 type DetailAction =
   | { type: 'FETCH_START' }
-  | { type: 'FETCH_SUCCESS'; character: CharacterDetailType }
+  | { type: 'FETCH_SUCCESS'; character: CharacterDetailData }
   | { type: 'FETCH_ERROR'; message: string };
 
 function detailReducer(_state: DetailState, action: DetailAction): DetailState {

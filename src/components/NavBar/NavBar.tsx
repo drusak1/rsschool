@@ -1,7 +1,7 @@
 import { NavLink } from 'react-router-dom';
 import styles from './NavBar.module.css';
 
-function linkClass({ isActive }: { isActive: boolean }): string {
+function linkClass({ isActive }: { isActive: boolean }): string | undefined {
   return isActive ? `${styles.link} ${styles.active}` : styles.link;
 }
 

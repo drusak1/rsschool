@@ -12,7 +12,7 @@ export interface CharacterLocation {
   url: string;
 }
 
-export interface CharacterDetail extends Character {
+export interface CharacterDetailData extends Character {
   type: string;
   origin: CharacterLocation;
   location: CharacterLocation;

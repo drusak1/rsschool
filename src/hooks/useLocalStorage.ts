@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 
 export function useLocalStorage(
   key: string,
@@ -12,14 +12,17 @@ export function useLocalStorage(
     }
   });
 
-  function setValue(value: string): void {
-    setStoredValue(value);
-    try {
-      localStorage.setItem(key, value);
-    } catch {
-      // noop
-    }
-  }
+  const setValue = useCallback(
+    (value: string): void => {
+      setStoredValue(value);
+      try {
+        localStorage.setItem(key, value);
+      } catch {
+        // noop
+      }
+    },
+    [key],
+  );
 
   return [storedValue, setValue];
 }
