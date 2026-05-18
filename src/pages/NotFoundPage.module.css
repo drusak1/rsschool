@@ -1,0 +1,41 @@
+.page {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: calc(100vh - 48px);
+  padding: 2rem 1rem;
+  background: #fafafa;
+}
+
+.content {
+  text-align: center;
+}
+
+.code {
+  margin: 0 0 0.5rem;
+  font-size: 5rem;
+  font-weight: 700;
+  color: #1976d2;
+  line-height: 1;
+}
+
+.message {
+  margin: 0 0 1.5rem;
+  font-size: 1.25rem;
+  color: #555;
+}
+
+.link {
+  display: inline-block;
+  padding: 0.6rem 1.25rem;
+  background: #1976d2;
+  color: white;
+  text-decoration: none;
+  border-radius: 6px;
+  font-size: 0.95rem;
+  transition: background 0.15s;
+}
+
+.link:hover {
+  background: #1565c0;
+}

@@ -1,0 +1,52 @@
+.page {
+  display: flex;
+  flex-direction: column;
+  min-height: calc(100vh - 48px);
+  background: #fafafa;
+}
+
+.header {
+  padding: 1.5rem 1rem 2rem;
+  background: linear-gradient(180deg, #1976d2 0%, #1565c0 100%);
+  color: white;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+}
+
+.title {
+  margin: 0;
+  font-size: 1.6rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+
+.errorTrigger {
+  margin-top: 0.25rem;
+}
+
+.content {
+  flex: 1;
+  display: flex;
+  gap: 1.5rem;
+  padding: 2rem 1rem 3rem;
+  max-width: 1400px;
+  width: 100%;
+  margin: 0 auto;
+  box-sizing: border-box;
+}
+
+.results {
+  flex: 1;
+  min-width: 0;
+}
+
+.error {
+  color: #d32f2f;
+  background: #fdecea;
+  padding: 1rem 1.5rem;
+  border-radius: 6px;
+  text-align: center;
+  border: 1px solid #f5c2bc;
+}

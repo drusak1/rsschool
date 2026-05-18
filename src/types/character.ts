@@ -7,6 +7,19 @@ export interface Character {
   image: string;
 }
 
+export interface CharacterLocation {
+  name: string;
+  url: string;
+}
+
+export interface CharacterDetailData extends Character {
+  type: string;
+  origin: CharacterLocation;
+  location: CharacterLocation;
+  episode: string[];
+  created: string;
+}
+
 export interface PageInfo {
   count: number;
   pages: number;

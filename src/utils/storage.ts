@@ -1,4 +1,4 @@
-const SEARCH_KEY = 'rsschool-react-search-term';
+export const SEARCH_KEY = 'rsschool-react-search-term';
 
 export function loadSearchTerm(): string {
   try {
@@ -12,6 +12,6 @@ export function saveSearchTerm(value: string): void {
   try {
     localStorage.setItem(SEARCH_KEY, value);
   } catch {
-    // localStorage может быть недоступен (приватный режим, квота) — игнорируем.
+    // noop
   }
 }

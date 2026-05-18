@@ -1,5 +1,5 @@
-import { Component } from 'react';
-import type { ChangeEvent, FormEvent, ReactNode } from 'react';
+import { useState } from 'react';
+import type { ChangeEvent, FormEvent } from 'react';
 import styles from './Search.module.css';
 
 interface Props {
@@ -8,38 +8,32 @@ interface Props {
   onSearch: (value: string) => void;
 }
 
-interface State {
-  value: string;
-}
+export function Search({ initialValue, disabled, onSearch }: Props): React.JSX.Element {
+  const [value, setValue] = useState(initialValue);
 
-export class Search extends Component<Props, State> {
-  state: State = { value: this.props.initialValue };
-
-  handleChange = (event: ChangeEvent<HTMLInputElement>): void => {
-    this.setState({ value: event.target.value });
-  };
-
-  handleSubmit = (event: FormEvent<HTMLFormElement>): void => {
-    event.preventDefault();
-    this.props.onSearch(this.state.value);
-  };
-
-  render(): ReactNode {
-    return (
-      <form className={styles.form} onSubmit={this.handleSubmit} role="search">
-        <input
-          type="search"
-          className={styles.input}
-          placeholder="Search characters..."
-          value={this.state.value}
-          onChange={this.handleChange}
-          disabled={this.props.disabled}
-          aria-label="Search"
-        />
-        <button type="submit" className={styles.button} disabled={this.props.disabled}>
-          Search
-        </button>
-      </form>
-    );
+  function handleChange(event: ChangeEvent<HTMLInputElement>): void {
+    setValue(event.target.value);
   }
+
+  function handleSubmit(event: FormEvent<HTMLFormElement>): void {
+    event.preventDefault();
+    onSearch(value);
+  }
+
+  return (
+    <form className={styles.form} onSubmit={handleSubmit} role="search">
+      <input
+        type="search"
+        className={styles.input}
+        placeholder="Search characters..."
+        value={value}
+        onChange={handleChange}
+        disabled={disabled}
+        aria-label="Search"
+      />
+      <button type="submit" className={styles.button} disabled={disabled}>
+        Search
+      </button>
+    </form>
+  );
 }

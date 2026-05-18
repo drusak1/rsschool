@@ -1,5 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { render, screen } from '@testing-library/react';
+import { MemoryRouter } from 'react-router-dom';
 import { CardList } from './CardList';
 import type { Character } from '../../types/character';
 
@@ -24,14 +25,22 @@ const characters: Character[] = [
 
 describe('<CardList />', () => {
   it('renders one card per character', () => {
-    render(<CardList characters={characters} />);
+    render(
+      <MemoryRouter>
+        <CardList characters={characters} />
+      </MemoryRouter>,
+    );
     expect(screen.getAllByRole('listitem')).toHaveLength(2);
     expect(screen.getByText('Rick Sanchez')).toBeInTheDocument();
     expect(screen.getByText('Morty Smith')).toBeInTheDocument();
   });
 
   it('renders a "no characters found" message for an empty array', () => {
-    render(<CardList characters={[]} />);
+    render(
+      <MemoryRouter>
+        <CardList characters={[]} />
+      </MemoryRouter>,
+    );
     expect(screen.getByText(/no characters found/i)).toBeInTheDocument();
   });
 });
