@@ -9,7 +9,7 @@ export function AboutPage(): React.JSX.Element {
           Built by <strong>Dzmitry Rusak</strong> as part of the RS School React 2026Q2 course.
         </p>
         <a
-          href="https://rs.school/react/"
+          href="https://rs.school/courses/reactjs"
           className={styles.link}
           target="_blank"
           rel="noopener noreferrer"
