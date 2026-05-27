@@ -1,7 +1,8 @@
 .nav {
   display: flex;
+  align-items: center;
   gap: 0.25rem;
-  background: #1565c0;
+  background: var(--color-nav-bg);
   padding: 0 1rem;
 }
 
@@ -24,4 +25,20 @@
 .link.active {
   color: white;
   border-bottom-color: white;
+}
+
+.themeToggle {
+  margin-left: auto;
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  color: white;
+  padding: 0.3rem 0.6rem;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: background 0.15s;
+}
+
+.themeToggle:hover {
+  background: rgba(255, 255, 255, 0.1);
 }
