@@ -1,5 +1,7 @@
 import { Link, useSearchParams } from 'react-router-dom';
 import type { Character } from '../../types/character';
+import { useAppDispatch, useAppSelector } from '../../store';
+import { toggleItem } from '../../store/selectedSlice';
 import styles from './Card.module.css';
 
 interface Props {
@@ -9,9 +11,25 @@ interface Props {
 export function Card({ character }: Props): React.JSX.Element {
   const [searchParams] = useSearchParams();
   const description = `${character.species} • ${character.status} • ${character.gender}`;
+  const dispatch = useAppDispatch();
+  const isSelected = useAppSelector((state) =>
+    state.selected.items.some((c) => c.id === character.id),
+  );
+
+  function handleCheckboxChange(): void {
+    dispatch(toggleItem(character));
+  }
 
   return (
     <article className={styles.card}>
+      <label className={styles.checkboxLabel}>
+        <input
+          type="checkbox"
+          checked={isSelected}
+          onChange={handleCheckboxChange}
+          aria-label={`Select ${character.name}`}
+        />
+      </label>
       <Link
         to={`/character/${character.id}?${searchParams.toString()}`}
         className={styles.link}

@@ -1,7 +1,10 @@
 import { describe, it, expect } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
+import { Provider } from 'react-redux';
+import { configureStore } from '@reduxjs/toolkit';
 import { CardList } from './CardList';
+import selectedReducer from '../../store/selectedSlice';
 import type { Character } from '../../types/character';
 
 const characters: Character[] = [
@@ -23,12 +26,18 @@ const characters: Character[] = [
   },
 ];
 
+function makeStore() {
+  return configureStore({ reducer: { selected: selectedReducer } });
+}
+
 describe('<CardList />', () => {
   it('renders one card per character', () => {
     render(
-      <MemoryRouter>
-        <CardList characters={characters} />
-      </MemoryRouter>,
+      <Provider store={makeStore()}>
+        <MemoryRouter>
+          <CardList characters={characters} />
+        </MemoryRouter>
+      </Provider>,
     );
     expect(screen.getAllByRole('listitem')).toHaveLength(2);
     expect(screen.getByText('Rick Sanchez')).toBeInTheDocument();
