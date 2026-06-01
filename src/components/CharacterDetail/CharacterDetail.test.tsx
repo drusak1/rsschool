@@ -2,7 +2,11 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { MemoryRouter, Routes, Route } from 'react-router-dom';
+import { Provider } from 'react-redux';
+import { configureStore } from '@reduxjs/toolkit';
 import { CharacterDetail } from './CharacterDetail';
+import selectedReducer from '../../store/selectedSlice';
+import { rickandmortyApi } from '../../api/rickandmortyApi';
 
 vi.mock('../../api/rickandmorty', async (importOriginal) => {
   const mod = await importOriginal<typeof import('../../api/rickandmorty')>();
@@ -25,14 +29,26 @@ const character = {
   created: '2017-11-04T18:48:46.250Z',
 };
 
+function makeTestStore() {
+  return configureStore({
+    reducer: {
+      selected: selectedReducer,
+      [rickandmortyApi.reducerPath]: rickandmortyApi.reducer,
+    },
+    middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(rickandmortyApi.middleware),
+  });
+}
+
 function renderDetail(id = '1') {
   return render(
-    <MemoryRouter initialEntries={[`/character/${id}`]}>
-      <Routes>
-        <Route path="/" element={<div>Home</div>} />
-        <Route path="/character/:id" element={<CharacterDetail />} />
-      </Routes>
-    </MemoryRouter>,
+    <Provider store={makeTestStore()}>
+      <MemoryRouter initialEntries={[`/character/${id}`]}>
+        <Routes>
+          <Route path="/" element={<div>Home</div>} />
+          <Route path="/character/:id" element={<CharacterDetail />} />
+        </Routes>
+      </MemoryRouter>
+    </Provider>,
   );
 }
 

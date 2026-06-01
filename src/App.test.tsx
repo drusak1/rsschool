@@ -3,6 +3,8 @@ import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { MemoryRouter } from 'react-router-dom';
 import { App } from './App';
+import { store } from './store';
+import { rickandmortyApi } from './api/rickandmortyApi';
 
 const charactersPayload = {
   info: { count: 1, pages: 1, next: null, prev: null },
@@ -52,6 +54,7 @@ function renderApp(initialEntry = '/') {
 describe('<App />', () => {
   beforeEach(() => {
     localStorage.clear();
+    store.dispatch(rickandmortyApi.util.resetApiState());
   });
 
   afterEach(() => {
