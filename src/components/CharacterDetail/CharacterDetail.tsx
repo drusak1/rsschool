@@ -1,58 +1,21 @@
-import { useEffect, useReducer } from 'react';
 import { useParams, useNavigate, useSearchParams } from 'react-router-dom';
-import { fetchCharacter, ApiError } from '../../api/rickandmorty';
-import type { CharacterDetailData } from '../../types/character';
+import type { FetchBaseQueryError } from '@reduxjs/toolkit/query';
+import type { SerializedError } from '@reduxjs/toolkit';
+import { useGetCharacterQuery } from '../../api/rickandmortyApi';
 import { Loader } from '../Loader/Loader';
 import styles from './CharacterDetail.module.css';
 
-type DetailState =
-  | { status: 'loading' }
-  | { status: 'success'; character: CharacterDetailData }
-  | { status: 'error'; message: string };
-
-type DetailAction =
-  | { type: 'FETCH_START' }
-  | { type: 'FETCH_SUCCESS'; character: CharacterDetailData }
-  | { type: 'FETCH_ERROR'; message: string };
-
-function detailReducer(_state: DetailState, action: DetailAction): DetailState {
-  switch (action.type) {
-    case 'FETCH_START':
-      return { status: 'loading' };
-    case 'FETCH_SUCCESS':
-      return { status: 'success', character: action.character };
-    case 'FETCH_ERROR':
-      return { status: 'error', message: action.message };
-  }
+function getErrorMessage(error: FetchBaseQueryError | SerializedError): string {
+  if ('error' in error) return String(error.error);
+  return String((error as { message?: string }).message ?? 'Failed to load character.');
 }
 
 export function CharacterDetail(): React.JSX.Element {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
-  const [state, dispatch] = useReducer(detailReducer, { status: 'loading' });
 
-  useEffect(() => {
-    if (!id) return;
-
-    let cancelled = false;
-    dispatch({ type: 'FETCH_START' });
-
-    fetchCharacter(Number(id))
-      .then((data) => {
-        if (cancelled) return;
-        dispatch({ type: 'FETCH_SUCCESS', character: data });
-      })
-      .catch((err: unknown) => {
-        if (cancelled) return;
-        const message = err instanceof ApiError ? err.message : 'Failed to load character.';
-        dispatch({ type: 'FETCH_ERROR', message });
-      });
-
-    return () => {
-      cancelled = true;
-    };
-  }, [id]);
+  const { data, isFetching, error } = useGetCharacterQuery(Number(id), { skip: !id });
 
   function handleClose(): void {
     const page = searchParams.get('page');
@@ -64,35 +27,35 @@ export function CharacterDetail(): React.JSX.Element {
       <button className={styles.close} onClick={handleClose} aria-label="Close details">
         ✕
       </button>
-      {state.status === 'loading' && <Loader />}
-      {state.status === 'error' && (
+      {isFetching && <Loader />}
+      {!isFetching && error && (
         <p className={styles.error} role="alert">
-          {state.message}
+          {getErrorMessage(error)}
         </p>
       )}
-      {state.status === 'success' && (
+      {!isFetching && data && (
         <div className={styles.content}>
-          <img className={styles.image} src={state.character.image} alt={state.character.name} />
-          <h2 className={styles.name}>{state.character.name}</h2>
+          <img className={styles.image} src={data.image} alt={data.name} />
+          <h2 className={styles.name}>{data.name}</h2>
           <dl className={styles.details}>
             <dt>Status</dt>
-            <dd>{state.character.status}</dd>
+            <dd>{data.status}</dd>
             <dt>Species</dt>
-            <dd>{state.character.species}</dd>
-            {state.character.type && (
+            <dd>{data.species}</dd>
+            {data.type && (
               <>
                 <dt>Type</dt>
-                <dd>{state.character.type}</dd>
+                <dd>{data.type}</dd>
               </>
             )}
             <dt>Gender</dt>
-            <dd>{state.character.gender}</dd>
+            <dd>{data.gender}</dd>
             <dt>Origin</dt>
-            <dd>{state.character.origin.name}</dd>
+            <dd>{data.origin.name}</dd>
             <dt>Location</dt>
-            <dd>{state.character.location.name}</dd>
+            <dd>{data.location.name}</dd>
             <dt>Episodes</dt>
-            <dd>{state.character.episode.length}</dd>
+            <dd>{data.episode.length}</dd>
           </dl>
         </div>
       )}
